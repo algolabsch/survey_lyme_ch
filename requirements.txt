@@ -1,1 +1,1 @@
-streamlit
+streamlit-survey=1.1.0 
