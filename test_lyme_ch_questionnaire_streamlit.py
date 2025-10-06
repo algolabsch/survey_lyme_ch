@@ -11,7 +11,7 @@ Created on Thu 14 sept 2025 update
 
 # RUN IN COMMAND LINE ->  
 # conda activate dev_stat
-# python -m streamlit run D:\_00_LYME_CH\data\lyme_ch_questionnaire\test_lyme_ch_questionnaire_streamlit.py
+# python -m streamlit run D:\_00_LYME_CH\data\lyme_ch_questionnaire\test_lyme_ch_questionnaire_streamlit_v2.py
 
 
 # ======================================================================
@@ -24,12 +24,13 @@ import uuid
 from datetime import date
 import json
 from ftplib import FTP
-
-#st.title('Lyme Suisse - Questionnaire')
-
+import pickle 
 
 import streamlit_survey as ss
 
+
+
+#st.title('Lyme Suisse - Questionnaire')
 # survey = ss.StreamlitSurvey()
 # ======PAGED SURVEY=============================
 
@@ -75,15 +76,14 @@ st.image(logo_link+logo_image, caption="Lyme Switzerland")
 
 # ------- INITIALIZE SESSION VARIABLES ---------------------------
 
-st.session_state["date"] = ''
-st.session_state["uuid_short"] = ''
-st.session_state["age"] = '' 
-st.session_state['ushort']=''  
 
-# ---- DEFINE ON SUBMIT FUNCTION ---------------------------
-# def submitted():
+# if "parameters" not in mystate:
+#     mystate.parameters = {"Parameter A": "", "Parameter B": "", "Parameter C": "", }
 
-    
+
+
+
+# -----------------------------
 
 
 # ======================================================================================================================
@@ -139,25 +139,34 @@ with st.sidebar:
     
     # Babesia distribution map
     # https://www.frontiersin.org/files/Articles/474717/fevo-07-00401-HTML/image_m/fevo-07-00401-g002.jpg
-    img_link = "https://www.frontiersin.org/files/Articles/474717/fevo-07-00401-HTML/image_m/"
-    img_image = "fevo-07-00401-g002.jpg"
+    
+    # img_link = "https://www.frontiersin.org/files/Articles/474717/fevo-07-00401-HTML/image_m/"
+    # img_image = "fevo-07-00401-g002.jpg"
 
-    st.image(img_link+img_image, caption="Borrelia distribution map")
+    # st.image(img_link+img_image, caption="Borrelia distribution map")
     
     # Borrelia distribution map
     # https://www.frontiersin.org/files/Articles/474717/fevo-07-00401-HTML/image_m/fevo-07-00401-g002.jpg
-    img_link = "https://www.mdpi.com/pathogens/pathogens-10-00230/article_deploy/html/images/"
-    img_image = "pathogens-10-00230-g007.png"
+    # img_link = "https://www.mdpi.com/pathogens/pathogens-10-00230/article_deploy/html/images/"
+    # img_image = "pathogens-10-00230-g007.png"
 
-    st.image(img_link+img_image, caption="Babesia distribution map")
+    # st.image(img_link+img_image, caption="Babesia distribution map")
+    
+    img_link = "https://www.lymedisease.org/wp-content/uploads/2014/04/"
+    img_image = "prevalence-coinfections-small.jpg"
+
+    st.image(img_link+img_image, caption="Lyme & coinfections")
+    
+    
+    
     
     # Bartonella distribution map
     # https://parasitesandvectors.biomedcentral.com/articles/10.1186/s13071-018-3152-6/figures/1
     # 13071_2018_3152_Fig1_HTML.webp
-    img_link = "https://parasitesandvectors.biomedcentral.com/articles/10.1186/s13071-018-3152-6/figures/1"
+    #img_link = ""
     #img_image = "13071_2018_3152_Fig1_HTML.webp"
 
-    st.image(img_link, caption="Bartonalla distribution map")
+    #st.image(img_link, caption="Bartonalla distribution map")
 
 
 
@@ -202,9 +211,28 @@ def validate(name, field_name):
 
 
 
+# ====================================================================================
+# Understanding widget behavior
+# https://docs.streamlit.io/develop/concepts/architecture/widget-behavior
+# Save widget values in Session State to preserve them between pages
+# If you want to navigate away from a widget and return to it while keeping its value, use a separate key in st.session_state to save the information independently from the widget. In this example, a temporary key is used with a widget. The temporary key uses an underscore prefix. Hence, "_my_key" is used as the widget key, but the data is copied to "my_key" to preserve it between pages.
+
+# import streamlit as st
+
+# def store_value():
+    # Copy the value to the permanent key
+#     st.session_state["my_key"] = st.session_state["_my_key"]
+
+# Copy the saved value to the temporary key
+# st.session_state["_my_key"] = st.session_state["my_key"]
+# st.number_input("Number of filters", key="_my_key", on_change=store_value)
+# ====================================================================================
+
+
+
 with pages:
     
-        
+# ------------------------------------------------------------------------------------------------------------        
     if pages.current == 0:
         
         
@@ -265,125 +293,182 @@ with pages:
         
         
         
-        survey.radio("Avez-vous déjà  complété ce formulaire sur notre site (www.lyme.ch) ?*", 
-                     options=["Oui", "Non"], 
-                     index=None, 
-                     #label_visibility="collapsed",
-                     key = 'Q_0001',
-                     horizontal=True)
+        st.session_state["0001"] = survey.radio("Avez-vous déjà  complété ce formulaire sur notre site (www.lyme.ch) ?*",
+                                             options=["Oui", "Non"], 
+                                             index=None, 
+                                             #label_visibility="collapsed",
+                                             key = 'Q_0001',
+                                             horizontal=True)
+                                
         
+        st.session_state["0002"] = survey.radio("Autorisez-vous Lyme Suisse à  utiliser vos réponses pour des raisons analytiques (Recherche)?*",
+                                             options=["Oui", "Non"], 
+                                             index=None, 
+                                             key = 'Q_0002',
+                                             horizontal=True)
         
-        survey.radio('''Autorisez-vous Lyme Suisse à  utiliser vos réponses pour des raisons analytiques (Recherche)?*''', 
-                     options=["Oui", "Non"], 
-                     index=None, 
-                     key = 'Q_0002',
-                     horizontal=True)
+        # ---- WARNING: KEY IS ONLY KEPT ON LOCAL PAGE -> TRANSFER KEY TO PERMANENT SESSION STATE VARIABLE
         
-        
+# ------------------------------------------------------------------------------------------------------------        
     elif pages.current == 1:
         st.header('page 1 - Informations générales', divider=True)
         
-        st.session_state['age'] = survey.number_input('Quel est votre âge ?*')
+        st.session_state['0003A'] = survey.number_input('Quel est votre âge ?*',key = 'Q_0003A')
         # ---------------------------------------------
         
-        survey.radio('Votre sexe ?*', 
-                     options=["Masculin", "Féminin","Autre"],
-                     index=None,  
-                     key = 'Q_0003',
-                     horizontal=True)
+        st.session_state['0003B'] = survey.radio('Votre sexe ?*', 
+                                             options=["Masculin", "Féminin","Autre"],
+                                             index=None,  
+                                             key = 'Q_0003B',
+                                             horizontal=True)
         
         #st.write('Votre âge : ', number)
         #survey.selectbox("Selection box:", options=["Option 1", "Option 2", "Option 3", "etc"])
         #st.selectbox('Quel est votre lieu (canton) de résidence ?*',("Vaud", "Fribourg", "Neuchâtel",'Genève','Bern','Tessin','Bern', 'Hors Suisse'))
-        st.selectbox('Quel est votre canton de résidence ?*', 
-                     options=["Vaud", "Fribourg", "Neuchâtel",'Genève','Bern','Tessin','Bern', 'Hors Suisse'],
-                     index=None,  
-                     key = 'Q_0004')
+        st.session_state['0004'] = survey.selectbox('Quel est votre canton de résidence ?*', 
+                                                 options=["Vaud", "Fribourg", "Neuchâtel",'Genève','Bern','Tessin','Bern', 'Hors Suisse'],
+                                                 index=None,  
+                                                 key = 'Q_0004')
         #st.write("You selected:", option)
-  
+ 
+# ------------------------------------------------------------------------------------------------------------
     elif pages.current == 2: 
         st.header('Page 2 - Diagnostiques tests effectués en Suisse', divider=True)
         #st.title('Diagnostiques, tests - page 2')
         
         
-        survey.number_input('Durée de la maladie (en années): *',
-                            key = 'Q_0005')
-        survey.number_input("Durée de l'errance  médicale (en années): *",
-                            key = 'Q_0006')
+        st.session_state['0005'] = survey.number_input('Durée de la maladie (en années): *',
+                                                   key = 'Q_0005')
+        st.session_state['0006'] = survey.number_input("Durée de l'errance  médicale (en années): *",
+                                                   key = 'Q_0006')
         
-        survey.slider("Nb d'année jusqu'au premier diagnostique (en années) ", 
-                      min_value=1, 
-                      max_value=50,
-                      key = 'Q_0007')
+        st.session_state['0007'] = survey.slider("Nb d'année jusqu'au premier diagnostique (en années) ", 
+                                              min_value=1, 
+                                              max_value=50,
+                                              key = 'Q_0007')
         
         # survey.multiselect("Multiple choice:", options=["Option 1", "Option 2", "Option 3", "etc"])
         
-        survey.multiselect("Avez-vous, EN SUISSE, reçu des diagnostics différents de la maladie de Lyme ou co-infections (complétez ci-dessous) ?",
-                           options=['Fibromyalgie','Syndrome de fatigue chronique', 'Troubles psychosomatiques','Autres maladies infectieuses',
-                                    'Maladie auto-immune','Dépression','Troubles anxieux',"Thada", "Autisme", "Dépression",
-                                    "Schizophrénie",'Psychoses','Autre','Non'],
-                           key = 'Q_0008')
+        st.session_state['0008a'] = survey.multiselect("Avez-vous, EN SUISSE, reçu des diagnostics différents de la maladie de Lyme ou co-infections (complétez ci-dessous) ?",
+                                                   options=['Fibromyalgie','Syndrome de fatigue chronique', 'Troubles psychosomatiques','Autres maladies infectieuses',
+                                                            'Maladie auto-immune','Dépression','Troubles anxieux',"Thada", "Autisme", "Dépression",
+                                                            "Schizophrénie",'Psychoses','Autre','Non'],
+                                                   key = 'Q_0008a')
         
-        survey.multiselect("Avez-vous, à l'étranger (HORS SUISSE), reçu des diagnostics différents de la maladie de Lyme ou co-infections (complétez ci-dessous) ?",
-                           options=['Fibromyalgie','Syndrome de fatigue chronique', 'Troubles psychosomatiques','Autres maladies infectieuses',
-                                    'Maladie auto-immune','Dépression','Troubles anxieux',"Thada", "Autisme", "Dépression",
-                                    "Schizophrénie",'Psychoses','Autre','Non'],
-                           key = 'Q_0009')
+        st.session_state['0008b'] = survey.multiselect("Avez-vous, à l'étranger (HORS SUISSE), reçu des diagnostics différents de la maladie de Lyme ou co-infections (complétez ci-dessous) ?",
+                                                   options=['Fibromyalgie','Syndrome de fatigue chronique', 'Troubles psychosomatiques','Autres maladies infectieuses',
+                                                            'Maladie auto-immune','Dépression','Troubles anxieux',"Thada", "Autisme", "Dépression",
+                                                            "Schizophrénie",'Psychoses','Autre','Non'],
+                                                   key = 'Q_0008b')
         
         #st.write("You selected:", diags_other)
         
         # ------------ diagnostic in Switzerland ---------------------------
         st.write("Utilisez cette barre pour indiquer le nombre de tests effectués (EN SUISSE), et complétez le tableau ci-dessous")   
 
-
+        # -------------- ====================== CH SLIDER & GRID ==============================================================
+        
         # a selection for the user to specify the number of rows
-        st.session_state.num_rows_ch = st.slider('CH - Number of rows', min_value=1, max_value=10)
+        #st.session_state['s1_num_rows_ch'] = st.session_state['num_rows_ch']
+         
+        #st.write('num_rows_ch = ',st.session_state['num_rows_ch'])   
+        
+        if st.session_state['num_rows_ch'] > 1:
+            s1_idx = st.session_state['num_rows_ch']
+        else:
+            s1_idx = 1
+            
+            
+        st.session_state['num_rows_ch'] = st.slider('CH - Number of rows', min_value=1, max_value=10, value=s1_idx, key='s1_num_rows_ch')
         
         # columns to lay out the inputs
-        grid = st.columns(4)
+        nb_col_01 = 3
         
-        # Function to create a row of widgets (with row number input to assure unique keys)
-        def add_row(row):
-                            
-            with grid[0]:
+        # --- initialize slider 1 keys --------------
+         
+        
+        #st.write('Canton de résidence = ',st.session_state['0004'])     
+        
+        
+        grid_01 = st.columns(nb_col_01)
+        
+        list_01 = ['','Borrelia','Bartonella','Babesia','encephalitis virus (TBE-V)','Anaplasma','Rickettsia','Ehrlichia',
+                   'Autres virus','Autres parasites','Autres Bactéries']
+        list_02 = ['','ELISA', 'Western Blot','IFA','PCR','Elispot','FISH','Immunoblot','Culture','Autre']
+        list_03 = ['','Positif', 'Négatif','Indéterminé']
+        
+        # ----------------------------------------------------------------------------------
+        
+        for r in range(0,st.session_state['num_rows_ch']):
+            
+            with grid_01[0]:
+                idx_ch_01 = list_01.index(st.session_state[f'test_ch_r{r}_c1'])
+                #st.write('idx_ch_01 = ',idx_ch_01)
+                #st.session_state[f'r{r}_c1'] = st.session_state[f'test_ch_r{r}_c1']
+                res1 = st.selectbox("Pathogène recherché",
+                                        options=list_01,
+                                        index=idx_ch_01,
+                                        key=f'r{r}_c1',
+                                        # key not useful (disappear when changing page..)
+                                        #on_change=keep_values(st.session_state['test_ch_r1_c1'])
+                                        )
+                st.session_state[f'test_ch_r{r}_c1'] = res1
+                #st.write('session_state test_ch_r{r}_c1 = ',st.session_state[f'test_ch_r{r}_c1'])                
+           
+            with grid_01[1]:
+                #st.session_state['idx'] = st.session_state['0009b']
+                idx_ch_02 = list_02.index(st.session_state[f'test_ch_r{r}_c2'])
+                #st.write('idx_ch_02 = ',idx_ch_02)
+                #st.session_state[f'r{r}_c2'] = st.session_state[f'test_ch_r{r}_c2']
+                res2 = st.selectbox('Test effectué',
+                                        options=list_02,
+                                        index=idx_ch_02,
+                                        key=f'r{r}_c2'
+                                        #on_change=keep_values(st.session_state['test_ch_r1_c2'])
+                                        )
+                                        #placeholder="Select contact method..." )
+                st.session_state[f'test_ch_r{r}_c2'] = res2
+                #st.write('session_state test_ch_r{r}_c2 = ',st.session_state[f'test_ch_r{r}_c2'])        
+            
+                                  
+            with grid_01[2]:
+                idx_ch_03 = list_03.index(st.session_state[f'test_ch_r{r}_c3'])
+                #st.write('idx_ch_03 = ',idx_ch_03)
+                #st.session_state[f'r{r}_c3'] = st.session_state[f'test_ch_r{r}_c3']
+                res3 = st.selectbox('Résultat des tests',
+                                        options=list_03,
+                                        index=idx_ch_03,
+                                        key=f'r{r}_c3'
+                                        #on_change=keep_values(st.session_state['test_ch_r1_c3'])
+                                        )
+                st.session_state[f'test_ch_r{r}_c3'] = res3
+                #st.write('session_state test_ch_r{r}_c3 = ',st.session_state[f'test_ch_r{r}_c3'])        
+                             
+           
+                #st.session_state['idx'] = st.session_state['0009c']
+        # st.write('session_state ch test_r0_c1 = ',st.session_state['test_ch_r0_c1']) 
+        # st.write('session_state ch test_r0_c2 = ',st.session_state['test_ch_r0_c2'])                                                                                                                      
+        # st.write('session_state ch test_r0_c3 = ',st.session_state['test_ch_r0_c3'])
+        # st.write('# session_state ch test_r1_c1 = ',st.session_state['test_ch_r1_c1']) 
+        # st.write('session_state ch test_r1_c2 = ',st.session_state['test_ch_r1_c2'])                                                                                                                      
+        # st.write('session_state ch test_r1_c3 = ',st.session_state['test_ch_r1_c3'])
+        
                 
-                survey.selectbox("Pathogène recherché", 
-                             options=['Borrelia','Bartonella','Babesia','encephalitis virus (TBE-V)','Anaplasma','Rickettsia','Ehrlichia',
-                                      'Autre virus','Autre parasite','Autre Bacteria'],
-                                      index=None,
-                                      key=f'input_col1_ch{row}')
-                
-                
-            with grid[1]:
-                survey.selectbox('Test effectué',
-                             options=['ELISA', 'Western Blot','IFA','PCR','Elispot','FISH','Immunoblot','Culture','Autre'],
-                             index=None,
-                             key=f'input_col2_ch{row}')
-                             #placeholder="Select contact method..." )
-                                      
-            with grid[2]:
-                survey.selectbox('Résultat des tests',
-                                  options=['Positif', 'Négatif','Indéterminé'],
-                                  index=None,
-                                  key=f'input_col3_ch{row}')
-
 #TypeError: RadioMixin.radio() got an unexpected keyword argument 'step'        
 
-# Loop to create rows of input widgets
-        for r in range(st.session_state.num_rows_ch):
-            add_row(r)                                                                                                   
-                
+                                                                                           
+        
+        
         # ============================================================================
-        
-        
-        
-        # ----------------------------------------------------------------
+ 
     # ================================================================================  
-    
+
+# ------------------------------------------------------------------------------------------------------------    
     elif pages.current == 3:
        
         st.header("Page 3 - Diagnostiques tests effectués à l'étranger", divider=True)       
       
+        #st.write('Canton de résidence = ',st.session_state['0004'])     
         
         #nb_timetoget_diagnostic = survey.number_input("Délais pour établir vos diagnostics (en mois) ? ")
         #2survey.number_input("Délais pour établir vos diagnostics (en mois) ? ", min_value=0, max_value=50, value=1)
@@ -391,72 +476,116 @@ with pages:
         
         
         
-        survey.radio('''Avez-vous effectué des tests privés (à l'étranger par ex.) et reçu un diagnostic clair de maladie de Lyme
-                                      (et/ou de coinfections éventuelles) par un laboratoire ou un médecin ?''',
-                                      options=['Oui', 'Non'], index=None,  
-                                      key = 'private_tests',
-                                      horizontal=True)
+        st.session_state['0010'] = survey.radio("Avez-vous effectué des tests privés (à l'étranger par ex.) et reçu un diagnostic clair de maladie de Lyme (et/ou de coinfections éventuelles) par un laboratoire ou un médecin ?",
+                                            options=['Oui', 'Non'], index=None,  
+                                            key = 'Q_0010',
+                                            horizontal=True)
         
         
         #PrÃ©cisez les rÃ©sultats et types de tests effectuÃ©s :  
-        st.write("Utilisez cette barre pour indiquer le nombre de tests effectués (A L'ETRANGER), et complétez le tableau ci-dessous")   
-
+        # st.write("Utilisez cette barre pour indiquer le nombre de tests effectués (A L'ETRANGER), et complétez le tableau ci-dessous")  
+        
+        #st.write('st session state - test_nch_r0_c1 = ',st.session_state['test_nch_r0_c1'] )
+        #st.write('st session state - test_nch_r1_c1 = ',st.session_state['test_nch_r1_c1'] )
 
         # a selection for the user to specify the number of rows
-        st.session_state.num_rows_nch = st.slider('NON CH - Number of rows', min_value=1, max_value=10)
+       
+        if st.session_state['num_rows_nch'] > 1:
+           
+            s1_idx_nch = st.session_state['num_rows_nch']
+        else:
+            s1_idx_nch = 1 
+       
+        
+       
+        st.session_state['num_rows_nch'] = st.slider('NON CH - Number of rows', min_value=1, max_value=10, value = s1_idx_nch, key='s2_num_rows_nch')
+        
+        
+        # ---------- initialize session state ---------------------
+        
+        
+        
+        
+        
         
         # columns to lay out the inputs
-        grid = st.columns(4,gap="medium", vertical_alignment="top", border=True)
+        grid_02 = st.columns(4,gap="medium", vertical_alignment="top", border=True)
+        
+        
+        list_04 = ['','Borrelia','Bartonella','Babesia','encephalitis virus (TBE-V)','Anaplasma','Rickettsia','Ehrlichia','Autre virus','Autre parasite','Autre Bacteria']
+        list_05 = ['','ELISA', 'Western Blot','IFA','PCR','Elispot','FISH','Immunoblot','Culture','Autre']
+        list_06 = ['','Positif', 'Négatif','Indéterminé']
+        list_07 = ['','USA','France','Allemagne','Belgique','Autre UE','Autre']
         
         # Function to create a row of widgets (with row number input to assure unique keys)
-        def add_row(row):
-                            
-            with grid[0]:
-                #survey.radio('Pathogène', options=['Borrelia', 'encephalitis virus (TBE-V)','Bartonella','Babesia','Anaplasma','Rickettsia','Ehrlichia','Autre virus','Autre parasite','Autre Bacteria'], 
-                #             horizontal=True, 
-                #             key=f'input_col1_nch{row}')
-                st.selectbox("Pathogène recherché",
-                            ('Borrelia','Bartonella','Babesia','encephalitis virus (TBE-V)','Anaplasma','Rickettsia','Ehrlichia','Autre virus','Autre parasite','Autre Bacteria'),
-                             index=None,
-                             key=f'input_col1_nch{row}')
-                             #placeholder="Select contact method..." )
+        # Loop to create rows of input widgets
+        for r2 in range(0,st.session_state['num_rows_nch']):
                         
-            with grid[1]:
+            #add_row(r) 
+                            
+            with grid_02[0]:
+                idx_nch_01 = list_04.index(st.session_state[f'test_nch_r{r2}_c1'])
+                # st.write('idx_nch_01 = ',idx_nch_01)
+                res1b = st.selectbox("Pathogène recherché",
+                                        options=list_04,
+                                        index=idx_nch_01,
+                                        key=f'nch_r{r2}_c1'
+                                        #key=f'input_col1_notch{row}')
+                                        )
+                                        #placeholder="Select contact method..." )
                 
-                st.selectbox('Test effectué',
-                            ('ELISA', 'Western Blot','IFA','PCR','Elispot','FISH','Immunoblot','Culture','Autre'),
-                             index=None,
-                             key=f'input_col2_nch{row}')
-                             #placeholder="Select contact method..." )
+                st.session_state[f'test_nch_r{r2}_c1'] = res1b
+                # st.write('session_state test_nch_r{r2}_c1 = ',st.session_state[f'test_nch_r{r2}_c1'])            
+                 
+                        
+            with grid_02[1]:
+                idx_nch_02 = list_05.index(st.session_state[f'test_nch_r{r2}_c2'])
+                # st.write('idx_nch_02 = ',idx_nch_02)
+                res2b = st.selectbox('Test effectué',
+                                         options=list_05,
+                                         index=idx_nch_02,
+                                         key=f'nch_r{r2}_c2'
+                                         )
+                                         #placeholder="Select contact method..." )
+                st.session_state[f'test_nch_r{r2}_c2'] = res2b
+                # st.write('session_state test_nch_r{r2}_c2 = ',st.session_state[f'test_nch_r{r2}_c2'])
                 
                 
-            with grid[2]:
                 
-                st.selectbox('Résultat des tests',
-                            ('Positif', 'Négatif','Indéterminé'),
-                             index=None,
-                             key=f'input_col3_nch{row}')
-                             #placeholder="Select contact method..." )
+            with grid_02[2]:
+                idx_nch_03 = list_06.index(st.session_state[f'test_nch_r{r2}_c3'])
+                # st.write('idx_nch_03 = ',idx_nch_03)
+                res3b = st.selectbox('Résultat des tests',
+                                        options=list_06,
+                                        index=idx_nch_03,
+                                        key=f'nch_r{r2}_c3'
+                                        )
+                                        #placeholder="Select contact method..." )
+                st.session_state[f'test_nch_r{r2}_c3'] = res3b
+                # st.write('session_state test_nch_r{r2}_c3 = ',st.session_state[f'test_nch_r{r2}_c3'])
+               
                 
              
-            with grid[3]:
-                
-                st.selectbox('Test effectués en (Région, pays)',
-                            ('Suisse', 'EU (hors Suisse)','USA','Autre'),
-                             index=None,
-                             key=f'input_col4_nch{row}')
-                             #placeholder="Select contact method..." )    
+            with grid_02[3]:
+                idx_nch_04 = list_07.index(st.session_state[f'test_nch_r{r2}_c4'])
+                # st.write('idx_nch_04 = ',idx_nch_04)
+                res4b = st.selectbox('Test effectués en (Région, pays)',
+                                        options=list_07,
+                                        index=idx_nch_04,
+                                        key=f'nch_r{r2}_c4'
+                                        )
+                                        #placeholder="Select contact method..." )   
+                st.session_state[f'test_nch_r{r2}_c4'] = res4b
+                # st.write('session_state test_nch_r{r2}_c4 = ',st.session_state[f'test_nch_r{r2}_c4'])    
              
 #TypeError: RadioMixin.radio() got an unexpected keyword argument 'step'        
 
-# Loop to create rows of input widgets
-        for r in range(st.session_state.num_rows_nch):
-            add_row(r)                                                                                                                                      
-  
-    # ================================================================================      
+        # ================================================================================      
     
-     
+# ------------------------------------------------------------------------------------------------------------     
     elif pages.current == 4:
+        
+        #st.write('Canton de résidence = ',st.session_state['0004'])     
         
         # Q1 = survey.radio("Thumbs up/down:", options=["NA", "👍", "👎"], horizontal=True, id="Q1")
         # if Q1 == "👍":
@@ -500,7 +629,7 @@ with pages:
         #st.write(st.session_state.Q02)  
         q_rate1(st.session_state.Q02)
                
-        survey.radio('3. Fatigue', options=list_section_01, index=0,horizontal=True, key="Q03")
+        survey.radio(" 3. Fatigue", options=list_section_01, index=0,horizontal=True, key="Q03")
         q_rate1(st.session_state.Q03)
         survey.radio('4. Perte de cheveux inexpliquée', options=list_section_01,index=0, horizontal=True, key="Q04")
         q_rate1(st.session_state.Q04)
@@ -597,8 +726,8 @@ with pages:
             
         #st.session_state.rtot = st.session_state.rtot + st.session_state.r1_tot + r2_tot   
         
-        st.write("Score Total at section 1 =  "+str(st.session_state['r1_tot']))  
-        st.write("Score Total at section 2 =  "+str(st.session_state['r2_tot']))  
+        st.write("Score Total section 1 =  "+str(st.session_state['r1_tot']))  
+        st.write("Score Total section 2 =  "+str(st.session_state['r2_tot']))  
                 
         #st.write("Score Total current (1+2) =  "+str(st.session_state.rtot))  
         
@@ -693,11 +822,13 @@ with pages:
         q_rate3('Q53')                                                                                        
     
         
-        st.write("Score section 3 =  "+str(st.session_state.r3_tot))  
+        st.write("Score section 3 =  "+str(st.session_state.r3_tot)) 
+        
         
         #st.session_state.rtot = st.session_state.rtot + st.session_state.r3_tot   
         #st.write("Score Total current =  "+str(st.session_state.rtot))  
-    # ================================================================================                                                                                                        
+    # =======================================================================================================================                                                                                                        
+# ------------------------------------------------------------------------------------------------------------
                  
     elif pages.current == 6:
         
@@ -725,22 +856,32 @@ with pages:
         # 21–30 days = 4 points
         
         st.header('Page 6 - Section 4: Score de santé globale', divider=True) 
-        list_section_04 = ['0 à 5 jours', '6 à 12 jours','13 à 20 jours, 21 à 30 jours']
-        
+        list_section_04 = ['0 à 5 jours', '6 à 12 jours','13 à 20 jours', '21 à 30 jours']
+        st.session_state['r4'] = 0
         st.session_state['r4_tot'] = 0
-        r4 = 0
+        #st.session_state['r4'] = 0
+        # st.write("INIT- r4 tot session state =  "+str(st.session_state['r4_tot']))  
+        # st.write("INIT- r4   =  "+str(r4))  
+        # state = ''
         def q_rate4(state):
             if state == list_section_04[0]:
-                r4 = 1
+                # st.session_state['r4'] = 1
+                st.session_state['r4']=1
             elif state == list_section_04[1]:
-                r4 = 2
+                # st.session_state['r4'] = 2
+                st.session_state['r4']=2
             elif state == list_section_04[2]:
-                r4 = 3
+                # st.session_state['r4'] = 3
+                st.session_state['r4']=3
             
+            elif state == list_section_04[3]:
+                # st.session_state['r4'] = 4
+                st.session_state['r4']=4
             else:
-                r4 = 4
+                print('')
                 
-            st.session_state['r4_tot'] = st.session_state.r4_tot + r4
+            #print('r4 = ',st.session_state['r4'])
+            st.session_state['r4_tot'] = st.session_state.r4_tot + st.session_state['r4']
             return
         
         survey.radio("54.En ce qui concerne votre santé PHYSIQUE globale, durant combien de temps au cours des trente derniers jours votre santé physique n'était-elle pas bonne ?",
@@ -788,16 +929,18 @@ with pages:
         survey.radio("Connaissiez-vous les éventuelles coinfections (Bartonella, Babesia etc..) avant votre première infection ?", options=['Oui', 'Non','Je ne me souviens pas'],index=1,  horizontal=True, key="Q61")
         survey.radio("Connaissiez-vous les dispositions / précautions nécessaires à  prendre pour éviter le contact avec les tiques ?", options=['Oui', 'Non','Je ne me souviens pas'],index=1,  horizontal=True, key="Q62")
         
-        st.multiselect("Possédez-vous (ou possédiez) des animaux de compagnie ?", ['Aucun','Chien','Chat','Autres (mammifères)','Autres (non mammifères)'], key="Q63" )
+        survey.multiselect("Possédez-vous (ou possédiez) des animaux de compagnie ?",
+                           options=['Aucun','Chien','Chat','Autres (mammifères)','Autres (non mammifères)'],
+                           key="Q63" )
         
         
         
         
         #st.write("You selected:", animals)
          
-        activities = st.multiselect("Vos activités sont-elles liées à  : ",
-        ["l'entretien de zones naturelles ?",'autre',"l'assistance aux animaux domestiques (SPA, chenils, refuges, ..) ?",
-         'autre',"l'exploitation agricole et animale (bovins etc..) ?",'la foresterie ?'], default=["autre"], key="Q64" )
+        survey.multiselect("Vos activités sont-elles liées à  : ",
+                                        options=['Autres',"l'entretien de zones naturelles ?","l'assistance aux animaux domestiques (SPA, chenils, refuges, ..) ?",'autre',"l'exploitation agricole et animale (bovins etc..) ?",'la foresterie ?'], 
+                                        key="Q64" )
         
         #st.write("You selected:", activities)
 
@@ -813,7 +956,7 @@ with pages:
         #survey.select_slider("Likert scale:", options=["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"], id="Q2")
         # Area input:
 
-        survey.text_area("Vos remarques, commentaires : ")
+        survey.text_area("Vos remarques, commentaires : ", key="Q65")
 
         #survey.slider("Slider:", min_value=0, max_value=500, value=50)
         # ---- END OF SURVEY -- SAVE ALL DATA TO FTP FILE ---------------------
@@ -825,21 +968,18 @@ with pages:
         
         
     elif pages.current == 9:
+        
+        
           
-        # ---------------- WRITE DATA TO JSON OBJECT -----------------------
+        # st.text_input(label, value="", max_chars=None, key=None, type="default", help=None, autocomplete=None, on_change=None, args=None, kwargs=None, *, placeholder=None, disabled=False, label_visibility="visible", icon=None, width="stretch")
         
-        data = survey.to_json()
-        json_str = json.dumps(data, indent=4)
         
-        # ---- SUBMITTED FINAL DATA AND PROCEDURE -------------------
-        ## getting the hostname by socket.gethostname() method
-        st.success("Vos réponses sont enregistrées, merci de votre collaboration !")
         hostname = socket.gethostname()
         ## getting the IP address using socket.gethostbyname() method
         ip_address = socket.gethostbyname(hostname)
         st.write(f"Hostname: {hostname}")
         st.write(f"IP Address: {ip_address}")
-
+      
         # Generate unique ID -> 1 UUID random IDs
         st.session_state['res'] = [str(uuid.uuid4()) for _ in range(2)]
         st.markdown(':blue[UUID :]' + str(st.session_state['res']))
@@ -852,10 +992,12 @@ with pages:
         st.write('Ushort : '+ st.session_state['ushort'])
 
         # ----------------------------------------------------------
-        
+        today = str(date.today())
         st.session_state['date'] = str(date.today())
         st.write('Date : ',st.session_state['date'])
         # st.write('UUID :' + str(st.session_state['res']))
+        
+        
         # --------------------------------------------------------------------
 
         # st.write('date : ',st.session_state["date"])
@@ -866,12 +1008,115 @@ with pages:
 
         st.session_state["filestr"] = ''  
         st.session_state["filestr"] = 'lymech_survey-'+ str(st.session_state['date']) + '-'+ str(st.session_state['ushort']) + '.json'
-        st.write('Filestr = ',st.session_state["filestr"])
-
-        with open(st.session_state["filestr"], "w") as f:
-            f.write(json_str)
-
         
+        st.session_state["filestr_tests"] = ''  
+        st.session_state["filestr_tests"] = 'lymech_survey-'+ str(st.session_state['date']) + '-'+ str(st.session_state['ushort']) + '-tests.json'
+        
+        st.write('Filestr = ',st.session_state["filestr"])
+        st.write('filestr_tests = ',st.session_state["filestr_tests"])
+        filestr = st.session_state["filestr"]
+        filestr_tests = st.session_state["filestr_tests"]
+        
+        survey.text_input('Date :',value=today, key = 'Q66_date')
+        survey.text_input('Short UUID :',value=ushort, key = 'Q67_suuid')
+        survey.text_input('Hostname :',value=hostname, key = 'Q68_hostname')
+        survey.text_input('IP Adress :',value=ip_address, key = 'Q69_ip')
+        survey.text_input('Filestr :',value=filestr, key = 'Q70_filestr')
+        survey.text_input('Filestr_tests :',value=filestr_tests, key = 'Q71_filestr')
+        
+        # ---------------- WRITE DATA TO JSON OBJECT -----------------------
+        #import streamlit as st
+        
+        #st.write(st.session_state)
+        
+        #st.set_page_config(layout="wide")
+        
+        # edited_df = st.data_editor(st.session_state['survey'], num_rows="dynamic")
+        
+        # --------------SAVE SESSION STATE DICTIONNARY --------------------------------------------
+               
+        
+        st.write('ST - DICT --> ')
+        
+        st_dict = {}
+        st_dict = {'Q66_date':st.session_state['Q66_date'],
+                   'Q67_suuid':st.session_state['Q67_suuid'],
+                   'Q68_hostname':st.session_state['Q68_hostname'],
+                   'Q69_ip':st.session_state['Q69_ip'],
+                   'Q70_filestr':st.session_state['filestr'],
+                   'Q71_filestr':st.session_state['filestr_tests'],
+                   'rtot':st.session_state['rtot'],
+                   'r1_tot':st.session_state['r1_tot'],
+                   'r2_tot':st.session_state['r2_tot'],
+                   'r3_tot':st.session_state['r3_tot'],
+                   'r4_tot':st.session_state['r4_tot'],
+                   'num_rows_ch':st.session_state['num_rows_ch'],
+                   'num_rows_nch':st.session_state['num_rows_nch'],
+                   'nb_col_ch':st.session_state['nb_col_ch'],
+                   'nb_col_nch':st.session_state['nb_col_nch'],                  
+                   }
+        
+                
+        for i in range(0,st.session_state['nb_max_row_qch']):
+            for j in range(1,st.session_state['nb_col_ch']):
+                #st.write('st session state ch -> : ',st.session_state[f'test_ch_r{i}_c{j}'] )
+                # st.write('push to scoredict..')
+                st_dict.update({
+                    f'test_ch_r{i}_c{j}':st.session_state[f'test_ch_r{i}_c{j}'],})
+                
+                                
+        for i in range(0,st.session_state['nb_max_row_nqch']):
+            for j in range(1,st.session_state['nb_col_nch']):
+                # st.write('st session state nch -> : ',st.session_state[f'test_nch_r{i}_c{j}'] )
+                # st.write('push to scoredict..')
+                st_dict.update({
+                    f'test_nch_r{i}_c{j}':st.session_state[f'test_nch_r{i}_c{j}'],})
+        
+        
+        
+        
+        # for key, value in st_dict.items():
+        #     st.write('key = ',key,'   value = ', value)
+        
+        # st.write('write full dict -> ')
+        # st.write(st_dict)
+        
+        st.write('============ write TEST DICT TO FILE ======================')
+                       
+        # ------------save locally (only for testing)----------------------------------------        
+        # path_dict = "D:/_00_LYME_CH/data/lyme_ch_questionnaire/"
+        # filedir = path_json +  st.session_state["filestr_tests"]
+        
+        # save session state dict to file
+        
+        # writing dictionary to a file as JSON
+        # with open(filedir, 'w') as f:
+        #     json.dump(st_dict, f)
+        
+        
+
+        # --- CREATE TO FILES (JSON DICT FILES) INTO MEMORY--------------------
+        st.write('CREATE FIRST FILE----------------')
+        data = survey.to_json()
+        json_str = json.dumps(data, indent=4)
+        
+        with open(st.session_state["filestr"], "w") as f1:
+            #f.write(json_str)
+            f1.write(json_str)
+            
+
+        # --- CREATE TEST DATA FILE  --------------------
+        st.write('CREATE SECOND FILE----------------')
+        json_str_2 = json.dumps(st_dict, indent=4)
+        
+        with open(st.session_state["filestr_tests"], "w") as f2:
+            #f.write(json_str)
+            f2.write(json_str_2)
+        
+        
+        # -------------OPEN FTP CONNEXTION -----------------------
+
+
         # Create an FTP object and connect to the server
         # LOGIN TO FTP SERVER
         ftpObject = FTP('279.hosttech.eu','algolabs.ch','t4HVn_7ig6yd');
@@ -879,15 +1124,11 @@ with pages:
         # ======= FTP DESTINATION FOLDER ===========================
         ftpResponseMessage = ftpObject.cwd("/lyme-ch.algolabs.ch/questionnaire");
         st.write(ftpResponseMessage);
-        # 250 CWD command successfULL 
-
-        # Open the file in binary mode
-        # ----------- SEARCH FILE ---------------
-        # path_json = "D:/_00_LYME_CH/data/lyme_ch_questionnaire/"
-        # filedir = path_json + 'lyme_ch_data_quest.json'
-        # file = open(filedir,'rb')                  # file to send
-
+        
+        # ------------UPLOAD FIRST FILE -----------------------
         filepath = st.session_state["filestr"]
+        st.write('filepath  = ',filepath)
+        
         # fileObject = open(filedir, "rb");
         fileObject = open(filepath, "rb");
 
@@ -896,6 +1137,34 @@ with pages:
         # Transfer the file in binary mode
         ftpResponseMessage = ftpObject.storbinary(ftpCommand, fp=fileObject);
         st.write(ftpResponseMessage);
+        
+        
+        # ------------UPLOAD SECOND FILE - TEST DATA ------------------
+        
+        # ======= FTP DESTINATION FOLDER ===========================
+        ftpResponseMessage = ftpObject.cwd("/lyme-ch.algolabs.ch/questionnaire_tests");
+        st.write(ftpResponseMessage);     
+        
+        st.write('SAVE ON FTP SERVER -> Save  LYME TESTS data........')
+        
+        filepath_tests = st.session_state["filestr_tests"]
+        st.write('filepath_tests  = ',filepath_tests)
+        # fileObject = open(filedir, "rb");
+        fileObject = open(filepath_tests, "rb");
+        
+        # [Errno 2] No such file or directory: 'lymech_survey-2025-10-06-867d48-tests.json'
+        # Traceback:
+        # File "D:\_00_LYME_CH\data\lyme_ch_questionnaire\test_lyme_ch_questionnaire_streamlit_v2.py", line 1141, in <module>
+        #     fileObject = open(filepath_tests, "rb");
+
+
+        file2BeSavedAs = st.session_state["filestr_tests"]
+        ftpCommand = "STOR %s"%file2BeSavedAs;
+        # Transfer the file in binary mode
+        ftpResponseMessage = ftpObject.storbinary(ftpCommand, fp=fileObject);
+        st.write(ftpResponseMessage);
+        
+        
         # ----------- REDIRECT TO ANOTHER URL -----------------
         
         #import streamlit.components.v1 as components
@@ -905,11 +1174,14 @@ with pages:
         
         #components.iframe("https://www.lyme.ch", width=1600, height=1600, scrolling=True)
         
+        
+        # ---- SUBMITTED FINAL DATA AND PROCEDURE -------------------
+        ## getting the hostname by socket.gethostname() method
+        st.success("Vos réponses sont enregistrées, merci de votre collaboration !")
+        
         st.stop()
-        
-        if st.button("Quit Survey"):
-            st.markdown("""<meta http-equiv="refresh" content="0; url='https://www.lyme.ch'" />""", unsafe_allow_html=True)
-        
+        #if st.button("Quit Survey"):
+        #    st.markdown("""<meta http-equiv="refresh" content="0; url='https://www.lyme.ch'" />""", unsafe_allow_html=True)
         
         
 
@@ -922,8 +1194,119 @@ with pages:
                                                                                               
 # ============= DISPLAYED ON FOOTER PAGES ====================
 
+def survey_init(key):
+    if key not in st.session_state:
+        #st.write('key : ',key,'  is empty')
+        st.session_state[key] = ''
+    return
+    
+list_key_0 = ['date','uuid_short','age','ushort',]
+
+for lk0 in list_key_0:
+    survey_init(lk0)
+ 
 
 
+def survey_init_dict(key):
+    if key not in st.session_state:
+        #st.write('key : ',key,'  is empty')
+        st.session_state[key] = ''
+    return
+    
+list_key_0 = ['date','uuid_short','age','ushort',]
+
+for lk0 in list_key_0:
+    survey_init(lk0)
+
+# --- init INTEGER sliders CH AND NON CH -------------
+
+def survey_init_int(key):
+    if key not in st.session_state:
+        #st.write('key : ',key,'  is empty')
+        st.session_state[key] = 1
+    return
+
+
+#survey_init_int('s1_num_rows_ch')
+survey_init_int('num_rows_ch')
+survey_init_int('num_rows_nch')
+survey_init_int('nb_max_row_qch')
+survey_init_int('nb_max_row_nqch')
+survey_init_int('nb_col_ch')
+survey_init_int('nb_col_nch')
+
+
+def survey_init_0(key):
+    if key not in st.session_state:
+        #st.write('key : ',key,'  is empty')
+        st.session_state[key] = 0
+    return
+
+survey_init_0('rtot')
+survey_init_0('r1_tot')
+survey_init_0('r2_tot')
+survey_init_0('r3_tot')
+survey_init_0('r4_tot')
+
+
+# ---------------- INITIALIZE SESSION DICT --------------------------
+
+# init data session_state for H questionnaire ------    
+st.session_state['nb_max_row_qch'] = 10
+st.session_state['nb_max_row_nqch'] = 10
+st.session_state['nb_col_ch'] = 4
+st.session_state['nb_col_nch'] = 5
+
+for i in range(0,st.session_state['nb_max_row_qch']):
+    for j in range(1,st.session_state['nb_col_ch']):
+        print(i,' , ',j,' ',f'test_chr{i}_c{j}')
+        survey_init(f'test_ch_r{i}_c{j}')
+    
+
+
+for i in range(0,st.session_state['nb_max_row_nqch']):
+    for j in range(1,st.session_state['nb_col_nch']):
+        print(i,' , ',j,' ',f'test_nchr{i}_c{j}')
+        survey_init(f'test_nch_r{i}_c{j}')
+
+
+
+
+
+
+# ------------- init session state dictionnary ---------------
+
+
+
+# ------------------------------------------------------------------
+# st.write('st session state - nb max row qch = ',st.session_state['nb_max_row_qch'])
+# st.write('st session state - nb_col_ch = ',st.session_state['nb_col_ch'])
+
+# st.write('st session state - nb max row nqch = ',st.session_state['nb_max_row_nqch'])
+# st.write('st session state - nb_col_nch = ',st.session_state['nb_col_nch'])
+
+
+
+
+
+# st.write('st session state ch test_ch_r0_c1 -> : ',st.session_state[f'test_ch_r0_c1'] )
+# st.write('st session state ch test_ch_r0_c2 -> : ',st.session_state[f'test_ch_r0_c2'] )
+# st.write('st session state ch test_ch_r0_c3 -> : ',st.session_state[f'test_ch_r0_c3'] )
+
+# st.write('st session state ch test_ch_r1_c1 -> : ',st.session_state[f'test_ch_r1_c1'] )
+# st.write('st session state ch test_ch_r1_c2 -> : ',st.session_state[f'test_ch_r1_c2'] )
+# st.write('st session state ch test_ch_r1_c3 -> : ',st.session_state[f'test_ch_r1_c3'] )
+
+# st.write('st session state ch test_ch_r2_c1 -> : ',st.session_state[f'test_ch_r2_c1'] )
+# st.write('st session state ch test_ch_r2_c2 -> : ',st.session_state[f'test_ch_r2_c2'] )
+# st.write('st session state ch test_ch_r2_c3 -> : ',st.session_state[f'test_ch_r2_c3'] )
+
+
+# st.write('st session state ch test_nch_r0_c1 -> : ',st.session_state[f'test_nch_r0_c1'] )
+# st.write('st session state ch test_nch_r0_c2 -> : ',st.session_state[f'test_nch_r0_c2'] )
+# st.write('st session state ch test_nch_r0_c3 -> : ',st.session_state[f'test_nch_r0_c3'] )
+
+# ------------- init session state dictionnary ---------------
 
 
 
