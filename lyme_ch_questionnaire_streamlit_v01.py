@@ -11,7 +11,7 @@ Created on Thu 14 sept 2025 update
 
 # RUN IN COMMAND LINE ->  
 # conda activate dev_stat
-# python -m streamlit run D:\_00_LYME_CH\data\lyme_ch_questionnaire\test_lyme_ch_questionnaire_streamlit_v2.py
+# python -m streamlit run D:\_00_LYME_CH\data\lyme_ch_questionnaire\lyme_ch_questionnaire_streamlit_v01.py
 
 
 # ======================================================================
@@ -108,8 +108,21 @@ with st.sidebar:
     '''
     st.markdown(css, unsafe_allow_html=True)
         
-    st.sidebar.header("Distribution of the 3-B species")
-    st.sidebar.text("(Borrelia-Bartonella-Babesia)")
+    st.sidebar.header("Questionnaire Lyme & coinfections")
+    
+    st.sidebar.text('''Qui sommes-nous ? 
+                    Lyme Suisse est une association à but non lucratif, 
+                    fondée en 2024 par des patients et pour les patients. 
+                    Son objectif est de partager les connaissances actuelles 
+                    sur les maladies vectorielles ( maladie de Lyme, 
+                    bartonelloses, babésioses, encéphalite à tique, etc) afin
+                    d'aider d’autres malades à mieux comprendre leur condition et trouver
+                    des issues.
+                    Le questionnaire est un outil statistique (et anonyme) indispensable
+                    pour nous faire avancer dans la compréhension de ces maladies.
+                    Merci de votre collaboration.''')
+    
+    
     # add_radio = st.radio(
     #     "Choose a shipping method",
     #     ("Standard (5-15 days)", "Express (2-5 days)")
@@ -129,11 +142,7 @@ with st.sidebar:
     # }
     
     
-    
-    
-    
-    
-    if st.button("Quit Survey"):
+    if st.button("Annuler et quitter - toutes les données seront effacées"):
         st.markdown("""<meta http-equiv="refresh" content="0; url='https://www.lyme.ch/en'" />""", unsafe_allow_html=True)
     #button[kind="primary"] {background-color: red;}
     
@@ -351,19 +360,101 @@ with pages:
         
         st.session_state['Q0008a'] = survey.multiselect("Avez-vous, EN SUISSE, reçu des diagnostics différents de la maladie de Lyme ou co-infections (complétez ci-dessous) ?",
                                                    options=['Fibromyalgie','Syndrome de fatigue chronique', 'Troubles psychosomatiques','Autres maladies infectieuses',
-                                                            'Maladie auto-immune','Dépression','Troubles anxieux',"Thada", "Autisme", "Dépression",
-                                                            "Schizophrénie",'Psychoses','Autre','Non'],
+                                                            'Maladie auto-immune','lupus', 'sclérose en plaques','polyarthrite rhumatoïde',
+                                                            'Dépression','Burn-out','Troubles anxieux généralisés',"Thada", "Autisme", "Dépression",
+                                                            "Schizophrénie",'Psychoses','Démence','Bipolarité','Autre','Non'],
                                                    key = 'Q_0008a')
         
         st.session_state['Q0008b'] = survey.multiselect("Avez-vous, à l'étranger (HORS SUISSE), reçu des diagnostics différents de la maladie de Lyme ou co-infections (complétez ci-dessous) ?",
                                                    options=['Fibromyalgie','Syndrome de fatigue chronique', 'Troubles psychosomatiques','Autres maladies infectieuses',
-                                                            'Maladie auto-immune','Dépression','Troubles anxieux',"Thada", "Autisme", "Dépression",
-                                                            "Schizophrénie",'Psychoses','Autre','Non'],
+                                                            'Maladie auto-immune','lupus', 'sclérose en plaques','polyarthrite rhumatoïde',
+                                                            'Dépression','Burn-out','Troubles anxieux généralisés',"Thada", "Autisme", "Dépression",
+                                                            "Schizophrénie",'Psychoses','Démence','Bipolarité','Autre','Non'],
                                                    key = 'Q_0008b')
         
+        # ----------------- MALADIES INFECTIEUSES --------------------
+        st.write('Autre diagnostics antérieurs de maladies infectieuses : ')
+        
+        options_inf =['Anaplasmose',
+                     'Angine bactérienne',
+                     'Aspergillose',
+                     'Babésiose',
+                     'Bartonellose',
+                     'Borréliose',
+                     'Botulisme',
+                     'Bronchiolite',
+                     'Bronchiolite',
+                     'Brucellose',
+                     'COVID-19 (virus SARS-CoV-2)',
+                     'Candidoses',
+                     'Chlamydiose',
+                     'Clostridium difficile',
+                     'Coqueluche',
+                     'Cryptococcose',
+                     'Dengue',
+                     'Diphtérie-tétanos',
+                     'Echinococcose',
+                     'Ehrlichiose monocytique humaine',
+                     'Escherichia coli ',
+                     'Fièvre Q (Coxiella burnetii)',
+                     'Fièvre de la Vallée du Rift',
+                     'Fièvre hémorragique Ebola',
+                     'Fièvre jaune',
+                     'Fièvre typhoïde',
+                     'Fièvres entériques (typhoïde et paratyphoïde)',
+                     'Fusobacterium',
+                     'Gale',
+                     'Gonorrhée',
+                     'Helicobacter pylori',
+                     'Hépatite A, B et C',
+                     'Infection à staphylocoque',
+                     'Klebsiellose',
+                     'Lambliase (Giardia intestinalis)',
+                     'Leptospirose',
+                     'Listériose',
+                     'Légionellose',
+                     'Maladie à virus Zika',
+                     'Mononucléose infectieuse',
+                     'Mononucléose infectieuse du virus Epstein-Barr (EBV)',
+                     'Mpox (variole du singe)',
+                     'Mycoses cutanées',
+                     'Méningite bactérienne',
+                     'Méningo-encéphalite à tiques FSME',
+                     'Méningocoque',
+                     'Paludisme (malaria)',
+                     'Paludisme - Malaria',
+                     'Peste',
+                     'Pneumonie',
+                     'Poliomyélite',
+                     'Prevotella',
+                     'Rougeole',
+                     'Scarlatine',
+                     'Septicémie Multiple',
+                     'Streptocoque',
+                     'Syphilis',
+                     'Toxoplasmose',
+                     'Tuberculose',
+                     'Tularémie',
+                     'Typhoïde',
+                     'VIH/sida',
+                     'Zona\tVirus']
+
+        
+        
+        st.session_state['Q0008c'] = survey.multiselect("Avez-vous antérieurement reçu des diagnostics concernant les maladies infectieuses suivantes (complétez ci-dessous) ?",
+                                                   options = options_inf,
+                                                   key = 'Q_0008c')
+        
+       
+
         #st.write("You selected:", diags_other)
         
         # ------------ diagnostic in Switzerland ---------------------------
+        
+        
+        
+        
+        
         st.write("Utilisez cette barre pour indiquer le nombre de tests effectués (EN SUISSE), et complétez le tableau ci-dessous")   
 
         # -------------- ====================== CH SLIDER & GRID ==============================================================
@@ -530,6 +621,7 @@ with pages:
                                         options=list_04,
                                         index=idx_nch_01,
                                         key=f'nch_r{r2}_c1'
+                                        
                                         #key=f'input_col1_notch{row}')
                                         )
                                         #placeholder="Select contact method..." )
@@ -616,19 +708,61 @@ with pages:
             #st.write("Current rate section 1 = ",r1,' Total rate = ',st.session_state.rtot)  
             return r1
         
-                    
+            
+        # ================ QUESTIONNAIRE HOROWITZ REVU ======================================
         
         survey.radio('1. Fièvre, sueurs inexpliqués', options=list_section_01, index=0, horizontal=True, key="QH01")
         q_rate1(st.session_state.QH01)
-        #st.write("Q01 = ",Q01)   
-        #st.write("LIST SECTION 1 / 0 = ",list_section_01[0])   
-        # Read
-        #st.write(st.session_state.Q01)        
-        
-        survey.radio('2. Changement de poids inexpliqué (perte ou prise)', options=list_section_01,index=0, horizontal=True, key="QH02")
+                
+        survey.radio('2a. Perte de poids inexpliquée ', options=list_section_01,index=0, horizontal=True, key="QH02a")
         #st.write(st.session_state.Q02)  
-        q_rate1(st.session_state.QH02)
-               
+        q_rate1(st.session_state.QH02a)
+        # -----------------------------------
+        survey.radio('2b. Prise de poids inexpliquée ', options=list_section_01,index=0, horizontal=True, key="QH02b")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02b)
+        
+        survey.radio('2c. Prise de poids inexpliquée ', options=list_section_01,index=0, horizontal=True, key="QH02c")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02c)
+        
+        survey.radio('2d. Corps étrangers dans les yeux ', options=list_section_01,index=0, horizontal=True, key="QH02d")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02d)
+        
+        survey.radio('2e. saturation en oxygene limite 94 pc ', options=list_section_01,index=0, horizontal=True, key="QH02e")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02e)
+        
+        survey.radio('2f. crevasses sur les doigts ', options=list_section_01,index=0, horizontal=True, key="QH02f")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02f)
+        
+        survey.radio('2g. Erythrème migrant (EM) ', options=list_section_01,index=0, horizontal=True, key="QH02g")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02g)
+        
+        survey.radio('2h. Lésions cutannées - Bartonella Associated Cutaneous Lesions (BACL)  ', options=list_section_01,index=0, horizontal=True, key="QH02h")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02h)
+        
+        survey.radio('2i. Paresies ', options=list_section_01,index=0, horizontal=True, key="QH02i")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02i)
+        
+        survey.radio('2j. Hallucinations auditives ', options=list_section_01,index=0, horizontal=True, key="QH02j")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02j)
+        
+        survey.radio('2k. Paresies ', options=list_section_01,index=0, horizontal=True, key="QH02k")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02k)
+        
+        survey.radio('2l. Douleurs musculaires profondes sporadiques ', options=list_section_01,index=0, horizontal=True, key="QH02l")
+        #st.write(st.session_state.Q02b)  
+        q_rate1(st.session_state.QH02l)
+        
+        # ------------------------------      
         survey.radio(" 3. Fatigue", options=list_section_01, index=0,horizontal=True, key="QH03")
         q_rate1(st.session_state.QH03)
         survey.radio('4. Perte de cheveux inexpliquée', options=list_section_01,index=0, horizontal=True, key="QH04")
@@ -681,7 +815,7 @@ with pages:
         q_rate1(st.session_state.QH27)
         survey.radio('28. Mal des transports accru, vertige', options=list_section_01,index=0, horizontal=True, key="QH28")
         q_rate1(st.session_state.QH28)
-        survey.radio("29. Etourdissements, manque d'équilibre, difficultés Ã  marcher", options=list_section_01,index=0, horizontal=True, key="QH29")
+        survey.radio("29. Etourdissements, manque d'équilibre, difficultés à  marcher", options=list_section_01,index=0, horizontal=True, key="QH29")
         q_rate1(st.session_state.QH29)
         survey.radio('30. Tremblements', options=list_section_01,index=0, horizontal=True, key="QH30")
         q_rate1(st.session_state.QH30)
@@ -695,8 +829,11 @@ with pages:
         q_rate1(st.session_state.QH34)
         survey.radio('35. Difficulté à parler ou à écrire', options=list_section_01,index=0, horizontal=True, key="QH35")
         q_rate1(st.session_state.QH35)
-        survey.radio("36. Sautes d'humeur, irritabilité, dépression", options=list_section_01,index=0, horizontal=True, key="QH36")
+        survey.radio("36. Sautes d'humeur, irritabilité", options=list_section_01,index=0, horizontal=True, key="QH36")
         q_rate1(st.session_state.QH36)
+        survey.radio("36b. Dépression", options=list_section_01,index=0, horizontal=True, key="QH36b")
+        q_rate1(st.session_state.QH36b)
+        
         survey.radio('37. Troubles du sommeil, je dors trop ou trop peu, réveil trop matinal', options=list_section_01,index=0, horizontal=True, key="QH37")
         q_rate1(st.session_state.QH37)
         survey.radio("38. Effet aggravant de l'alcool sur l'intensité des symptômes et/ou de la « gueule de bois »", options=list_section_01,index=0,  horizontal=True, key="QH38")
@@ -765,11 +902,19 @@ with pages:
         list_section_03 = ["Oui", 'Non']
         
         st.session_state.r3_tot = 0
+        
         def q_rate3(key):
-            if (key == 'QH44' and st.session_state.QH44) == list_section_03[0]:
-                r3=3
-            elif (key == 'QH45' and st.session_state.QH45) == list_section_03[0]:
-                r3=5
+            if (key == 'QH44a' and st.session_state.QH44a) == list_section_03[0]:
+                r3=1
+            
+            elif (key == 'QH44b' and st.session_state.QH44b) == list_section_03[0]:
+                r3=1
+                
+            elif (key == 'QH44c' and st.session_state.QH44c) == list_section_03[0]:
+                r3=1    
+                
+            #elif (key == 'QH45' and st.session_state.QH45) == list_section_03[0]:
+            #    r3=5
             elif (key == 'QH46' and st.session_state.QH46) == list_section_03[0]:
                 r3=2
             elif (key == 'QH47' and st.session_state.QH47) == list_section_03[0]:
@@ -780,8 +925,11 @@ with pages:
                 r3=4
             elif (key == 'QH50' and st.session_state.QH50) == list_section_03[0]:
                 r3=4
-            elif (key == 'QH51' and st.session_state.QH51) == list_section_03[0]:
+            elif (key == 'QH51a' and st.session_state.QH51a) == list_section_03[0]:
                 r3=3
+            elif (key == 'QH51b' and st.session_state.QH51b) == list_section_03[0]:
+                r3=3    
+                
             elif (key == 'QH52' and st.session_state.QH52) == list_section_03[0]:
                 r3=3
             elif (key == 'QH53' and st.session_state.QH53) == list_section_03[0]:
@@ -799,10 +947,21 @@ with pages:
          # st.session_state
         
                
-        survey.radio("44. J'ai eu une piqûre de tique, SANS érythrème migrant et SANS symptômes grippaux", options=list_section_03, index=1,  horizontal=True, key="QH44")
-        q_rate3('QH44')
-        survey.radio("45. J'ai eu une piqûre de tique, AVEC érythème migrant et / ou AVEC symptômes grippaux", options=list_section_03, index=1,  horizontal=True, key="QH45")
-        q_rate3('QH45')
+        survey.radio("44a. J'ai eu une piqûre de tique", options=list_section_03, index=1,  horizontal=True, key="QH44a")
+        q_rate3('QH44a')
+        
+        survey.radio("44b. J'ai eu un érythrème migrant", options=list_section_03, index=1,  horizontal=True, key="QH44b")
+        q_rate3('QH44b')
+        
+        survey.radio("44c. J'ai eu des symptômes grippaux", options=list_section_03, index=1,  horizontal=True, key="QH44c")
+        q_rate3('QH44c')
+        
+        
+        #survey.radio("45. J'ai eu une piqûre de tique, AVEC érythème migrant et / ou AVEC symptômes grippaux", options=list_section_03, index=1,  horizontal=True, key="QH45")
+        #q_rate3('QH45')
+        
+        
+        
         survey.radio("46. Vous vivez dans une zone considérée comme endémique", options=list_section_03, index=1,  horizontal=True, key="QH46")
         q_rate3('QH46')
         survey.radio("47. Un autre membre de la famille a déjà  été diagnostiqué avec la maladie de Lyme ou une autre infection transmise par les tiques", index=1,  options=list_section_03, horizontal=True, key="QH47")
@@ -813,10 +972,15 @@ with pages:
         q_rate3('QH49')
         survey.radio("50. Vous ressentez des picotements/ brûlures / engourdissements qui migrent et/ou qui vont et viennent?", options=list_section_03, index=1,  horizontal=True, key="QH50")                                                                                                           
         q_rate3('QH50')
-        survey.radio("51. Vous avez déjà  reçu un diagnostic de syndrome de fatigue chronique ou de fibromyalgie", options=list_section_03, index=1,  horizontal=True, key="QH51")                                                                                                           
-        q_rate3('QH51')
+        
+        survey.radio("51a. Vous avez déjà reçu un diagnostic de syndrome de fatigue chronique, hypersomnie", options=list_section_03, index=1,  horizontal=True, key="QH51a")                                                                                                           
+        q_rate3('QH51a')
+        survey.radio("51b. Vous avez déjà reçu un diagnostic de fibromyalgie", options=list_section_03, index=1,  horizontal=True, key="QH51b")                                                                                                           
+        q_rate3('QH51b')
+        
         survey.radio("52. Vous avez reçu un diagnostic préalable d'une maladie auto-immune spécifique", options=list_section_03, index=1,  horizontal=True, key="QH52")   
         q_rate3('QH52')
+        
         st.write("Ref: [lupus, sclérose en plaques ou polyarthrite rhumatoïde, maladie auto-immune non spécifique de type connectivite]")                                                                                                      
         survey.radio("53. Vous avez eu un test de Lyme positif", options=list_section_03, index=1,  horizontal=True, key="QH53") 
         q_rate3('QH53')                                                                                        
@@ -1017,6 +1181,7 @@ with pages:
         filestr = st.session_state["filestr"]
         filestr_tests = st.session_state["filestr_tests"]
         
+        #st.session_state["Q0065b"] = survey.text_input('Votre email (facultatif) :',value='', key = 'Q_0065b')
         st.session_state["Q0066"] = survey.text_input('Date :',value=today, key = 'Q_0066')
         st.session_state["Q0067"] = survey.text_input('Short UUID :',value=ushort, key = 'Q_0067')
         st.session_state["Q0068"] = survey.text_input('Hostname :',value=hostname, key = 'Q_0068')
